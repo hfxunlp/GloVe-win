@@ -1,0 +1,11 @@
+﻿  vocab_count.c
+vocab_count.c(101): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+vocab_count.c(133): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\stdio.h(1769): note: 参见“sprintf”的声明
+vocab_count.c(134): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\stdio.h(1193): note: 参见“fscanf”的声明
+  正在生成代码
+  All 19 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  已完成代码的生成
+  vocab_count.vcxproj -> E:\ano\Workspace\glove-win\vs\x64\vocab_count\x64\Release\vocab_count.exe
+  vocab_count.vcxproj -> E:\ano\Workspace\glove-win\vs\x64\vocab_count\x64\Release\vocab_count.pdb (Full PDB)

@@ -1,2 +1,2 @@
 # GloVe-win
-GloVe tools based on windows compiled with visual studio 2015.
+Stanford GloVe(https://github.com/stanfordnlp/GloVe) tools built for windows compiled with visual studio 2015 on Windows 10 x64.

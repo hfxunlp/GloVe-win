@@ -10,3 +10,5 @@ For files built with Visual Studio 2015, you should have Visual C++ Redistributa
 You could also try the files built with dev c++, which are more universal and can easily run on many windows with different version.
 
 You could try to compile these C code your self with POSIX Threads (pthreads) for Win32(http://sourceware.org/pthreads-win32/) if you want.
+
+There are still problems in shuffle and glove, and I'm working on it.

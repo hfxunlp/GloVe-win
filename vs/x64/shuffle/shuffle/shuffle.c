@@ -25,6 +25,9 @@
 #include <string.h>
 #include <stdlib.h>
 
+#include <fcntl.h>  
+#include <io.h>
+
 #define MAX_STRING_LENGTH 1000
 
 static const long LRAND_MAX = ((long)RAND_MAX + 2) * (long)RAND_MAX;
@@ -84,6 +87,7 @@ int shuffle_merge(int num) {
 	CREC *array;
 	char filename[MAX_STRING_LENGTH];
 	FILE **fid, *fout = stdout;
+	_setmode(_fileno(fout), _O_BINARY);
 
 	array = malloc(sizeof(CREC) * array_size);
 	fid = malloc(sizeof(FILE) * num);
@@ -94,6 +98,7 @@ int shuffle_merge(int num) {
 			fprintf(stderr, "Unable to open file %s.\n", filename);
 			return 1;
 		}
+		_setmode(_fileno(fid[fidcounter]), _O_BINARY);
 	}
 	if (verbose > 0) fprintf(stderr, "Merging temp files: processed %ld lines.", l);
 
@@ -132,12 +137,14 @@ int shuffle_by_chunks() {
 	char filename[MAX_STRING_LENGTH];
 	CREC *array;
 	FILE *fin = stdin, *fid;
+	_setmode(_fileno(fin), _O_BINARY);
 	array = malloc(sizeof(CREC) * array_size);
 
 	fprintf(stderr, "SHUFFLING COOCCURRENCES\n");
 	if (verbose > 0) fprintf(stderr, "array size: %lld\n", array_size);
 	sprintf(filename, "%s_%04d.bin", file_head, fidcounter);
 	fid = fopen(filename, "w");
+	_setmode(_fileno(fid), _O_BINARY);
 	if (fid == NULL) {
 		fprintf(stderr, "Unable to open file %s.\n", filename);
 		return 1;
@@ -218,3 +225,4 @@ int main(int argc, char **argv) {
 	if ((i = find_arg((char *)"-array-size", argc, argv)) > 0) array_size = atoll(argv[i + 1]);
 	return shuffle_by_chunks();
 }
+

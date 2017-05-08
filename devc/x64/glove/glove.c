@@ -30,6 +30,9 @@
 #include <pthread.h>
 #include <time.h>
 
+#include <fcntl.h>  
+#include <io.h>
+
 #define posix_memalign(p, a, s) (((*(p)) = _aligned_malloc((s), (a))), *(p) ?0 :errno)
 
 #pragma comment(lib, "pthreadVC2.lib")
@@ -104,6 +107,7 @@ void *glove_thread(void *vid) {
 	real diff, fdiff, temp1, temp2;
 	FILE *fin;
 	fin = fopen(input_file, "rb");
+	_setmode(_fileno(fin), _O_BINARY);
 	_fseeki64(fin, (num_lines / num_threads * id) * (sizeof(CREC)), SEEK_SET); //Threads spaced roughly equally throughout file
 	cost[id] = 0;
 
@@ -191,6 +195,7 @@ int save_params(int nb_iter) {
 			sprintf(output_file, "%s.%03d.bin", save_W_file, nb_iter);
 
 		fout = fopen(output_file, "wb");
+		_setmode(_fileno(fout), _O_BINARY);
 		if (fout == NULL) { fprintf(stderr, "Unable to open file %s.\n", save_W_file); return 1; }
 		for (a = 0; a < 2 * (long long)vocab_size * (vector_size + 1); a++) fwrite(&W[a], sizeof(real), 1, fout);
 		fclose(fout);
@@ -202,6 +207,7 @@ int save_params(int nb_iter) {
 
 			fgs = fopen(output_file_gsq, "wb");
 			if (fgs == NULL) { fprintf(stderr, "Unable to open file %s.\n", save_gradsq_file); return 1; }
+			_setmode(_fileno(fgs), _O_BINARY);
 			for (a = 0; a < 2 * (long long)vocab_size * (vector_size + 1); a++) fwrite(&gradsq[a], sizeof(real), 1, fgs);
 			fclose(fgs);
 		}
@@ -296,6 +302,7 @@ int train_glove() {
 
 	fin = fopen(input_file, "rb");
 	if (fin == NULL) { fprintf(stderr, "Unable to open cooccurrence file %s.\n", input_file); return 1; }
+	_setmode(_fileno(fin), _O_BINARY);
 	_fseeki64(fin, 0, SEEK_END);
 	file_size = _ftelli64(fin);
 	num_lines = file_size / (sizeof(CREC)); // Assuming the file isn't corrupt and consists only of CREC's

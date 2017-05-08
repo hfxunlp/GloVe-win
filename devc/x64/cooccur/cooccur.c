@@ -26,6 +26,9 @@
 #include <string.h>
 #include <math.h>
 
+#include <fcntl.h>  
+#include <io.h>
+
 #define TSIZE 1048576
 #define SEED 1159241
 #define HASHFN bitwisehash
@@ -233,6 +236,7 @@ int merge_files(int num) {
 	fid = malloc(sizeof(FILE) * num);
 	pq = malloc(sizeof(CRECID) * num);
 	fout = stdout;
+	_setmode(_fileno(fout), _O_BINARY);
 	if (verbose > 1) fprintf(stderr, "Merging cooccurrence files: processed 0 lines.");
 
 	/* Open all files and add first entry of each to priority queue */
@@ -240,6 +244,7 @@ int merge_files(int num) {
 		sprintf(filename, "%s_%04d.bin", file_head, i);
 		fid[i] = fopen(filename, "rb");
 		if (fid[i] == NULL) { fprintf(stderr, "Unable to open file %s.\n", filename); return 1; }
+		_setmode(_fileno(fid[i]), _O_BINARY);
 		fread(&new, sizeof(CREC), 1, fid[i]);
 		new.id = i;
 		insert(pq, new, i + 1);
@@ -333,6 +338,7 @@ int get_cooccurrence() {
 	sprintf(format, "%%%ds", MAX_STRING_LENGTH);
 	sprintf(filename, "%s_%04d.bin", file_head, fidcounter);
 	foverflow = fopen(filename, "w");
+	_setmode(_fileno(foverflow), _O_BINARY);
 	if (verbose > 1) fprintf(stderr, "Processing token: 0");
 
 	/* For each token in input stream, calculate a weighted cooccurrence sum within window_size */
@@ -344,6 +350,7 @@ int get_cooccurrence() {
 			fidcounter++;
 			sprintf(filename, "%s_%04d.bin", file_head, fidcounter);
 			foverflow = fopen(filename, "w");
+			_setmode(_fileno(foverflow), _O_BINARY);
 			ind = 0;
 		}
 		flag = get_word(str, fid);
@@ -386,6 +393,7 @@ int get_cooccurrence() {
 	/* Write out full bigram_table, skipping zeros */
 	if (verbose > 1) fprintf(stderr, "Writing cooccurrences to disk");
 	fid = fopen(filename, "w");
+	_setmode(_fileno(fid), _O_BINARY);
 	j = 1e6;
 	for (x = 1; x <= vocab_size; x++) {
 		if ((long long)(0.75*log(vocab_size / x)) < j) { j = (long long)(0.75*log(vocab_size / x)); if (verbose > 1) fprintf(stderr, "."); } // log's to make it look (sort of) pretty

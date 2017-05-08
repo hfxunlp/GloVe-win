@@ -48,6 +48,7 @@ typedef struct cooccur_rec {
 	real val;
 } CREC;
 
+int write_header=0; //0=no, 1=yes; writes vocab_size/vector_size as first line for use with some libraries, such as gensim.
 int verbose = 2; // 0, 1, or 2
 int use_unk_vec = 1; // 0 or 1
 int num_threads = 8; // pthreads
@@ -93,8 +94,7 @@ inline real check_nan(real update) {
 	if (isnan(update) || isinf(update)) {
 		fprintf(stderr, "\ncaught NaN in update");
 		return 0.;
-	}
-	else {
+	} else {
 		return update;
 	}
 }
@@ -231,6 +231,7 @@ int save_params(int nb_iter) {
 		fid = fopen(vocab_file, "r");
 		sprintf(format, "%%%ds", MAX_STRING_LENGTH);
 		if (fid == NULL) { fprintf(stderr, "Unable to open file %s.\n", vocab_file); return 1; }
+		if (write_header) fprintf(fout, "%ld %d\n", vocab_size, vector_size);
 		for (a = 0; a < vocab_size; a++) {
 			if (fscanf(fid, format, word) == 0) return 1;
 			// input vocab cannot contain special <unk> keyword
@@ -381,6 +382,8 @@ int main(int argc, char **argv) {
 		printf("Usage options:\n");
 		printf("\t-verbose <int>\n");
 		printf("\t\tSet verbosity: 0, 1, or 2 (default)\n");
+		printf("\t-write-header <int>\n");
+		printf("\t\tIf 1, write vocab_size/vector_size as first line. Do nothing if 0 (default).\n");
 		printf("\t-vector-size <int>\n");
 		printf("\t\tDimension of word vector representations (excluding bias term); default 50\n");
 		printf("\t-threads <int>\n");
@@ -415,8 +418,8 @@ int main(int argc, char **argv) {
 		printf("\nExample usage:\n");
 		printf("./glove -input-file cooccurrence.shuf.bin -vocab-file vocab.txt -save-file vectors -gradsq-file gradsq -verbose 2 -vector-size 100 -threads 16 -alpha 0.75 -x-max 100.0 -eta 0.05 -binary 2 -model 2\n\n");
 		result = 0;
-	}
-	else {
+	} else {
+		if ((i = find_arg((char *)"-write-header", argc, argv)) > 0) write_header = atoi(argv[i + 1]);
 		if ((i = find_arg((char *)"-verbose", argc, argv)) > 0) verbose = atoi(argv[i + 1]);
 		if ((i = find_arg((char *)"-vector-size", argc, argv)) > 0) vector_size = atoi(argv[i + 1]);
 		if ((i = find_arg((char *)"-iter", argc, argv)) > 0) num_iter = atoi(argv[i + 1]);

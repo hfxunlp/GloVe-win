@@ -144,11 +144,11 @@ int shuffle_by_chunks() {
 	if (verbose > 0) fprintf(stderr, "array size: %lld\n", array_size);
 	sprintf(filename, "%s_%04d.bin", file_head, fidcounter);
 	fid = fopen(filename, "w");
-	_setmode(_fileno(fid), _O_BINARY);
 	if (fid == NULL) {
 		fprintf(stderr, "Unable to open file %s.\n", filename);
 		return 1;
 	}
+	_setmode(_fileno(fid), _O_BINARY);
 	if (verbose > 1) fprintf(stderr, "Shuffling by chunks: processed 0 lines.");
 
 	while (1) { //Continue until EOF
@@ -165,6 +165,7 @@ int shuffle_by_chunks() {
 				fprintf(stderr, "Unable to open file %s.\n", filename);
 				return 1;
 			}
+			_setmode(_fileno(fid), _O_BINARY);
 			i = 0;
 		}
 		fread(&array[i], sizeof(CREC), 1, fin);
